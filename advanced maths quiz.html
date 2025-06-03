@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>BODMAS Math Quiz</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f3f4f6;
+      padding: 30px;
+      text-align: center;
+    }
+
+    #dashboard, #quiz-box, #settings {
+      background: white;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 500px;
+    }
+
+    h1, h2 {
+      color: #333;
+    }
+
+    #question {
+      font-size: 24px;
+      margin: 20px 0;
+      font-weight: bold;
+    }
+
+    input[type="text"], select {
+      padding: 10px;
+      font-size: 16px;
+      width: 80%;
+      max-width: 300px;
+      margin: 10px auto;
+    }
+
+    input[type="number"] {
+      padding: 10px;
+      font-size: 18px;
+      width: 100px;
+      text-align: center;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 10px;
+      background-color: #1976d2;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    #feedback {
+      font-size: 18px;
+      margin-top: 10px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 5px 15px;
+      border-radius: 20px;
+      background-color: #ddd;
+      color: #333;
+      font-weight: bold;
+    }
+
+    .Beginner { background-color: #ccc; }
+    .Learner { background-color: #b2dfdb; }
+    .Mathlete { background-color: #81c784; }
+    .Pro { background-color: #64b5f6; }
+    .Genius { background-color: gold; color: #000; }
+  </style>
+</head>
+<body>
+
+  <div id="settings">
+    <h2>🎮 Welcome to BODMAS Math Quiz!</h2>
+    <input type="text" id="playerName" placeholder="Enter your name" />
+    <br />
+    <label>Select Level: </label>
+    <select id="levelSelect">
+      <option value="0">Very Easy</option>
+      <option value="1">Easy</option>
+      <option value="2">Medium</option>
+      <option value="3">Hard</option>
+      <option value="4">Very Hard</option>
+    </select>
+    <br />
+    <button onclick="startGame()">Start Game</button>
+  </div>
+
+  <div id="dashboard" style="display:none;">
+    <h2>📊 Dashboard</h2>
+    <p><strong>Player:</strong> <span id="dashName"></span></p>
+    <p><strong>Level:</strong> <span id="dashLevel"></span></p>
+    <p><strong>Score:</strong> <span id="dashScore">0</span></p>
+    <p><strong>Badge:</strong> <span id="badge" class="badge Beginner">Beginner</span></p>
+  </div>
+
+  <div id="quiz-box" style="display:none;">
+    <div id="question">Loading...</div>
+    <input type="text" id="answer" placeholder="Your answer" />
+    <button onclick="checkAnswer()">Submit</button>
+    <p id="feedback"></p>
+  </div>
+
+  <script>
+    let score = 0;
+    let playerName = "";
+    let level = 0;
+    let currentAnswer = 0;
+    let expression = "";
+
+    const levelNames = ["Very Easy", "Easy", "Medium", "Hard", "Very Hard"];
+    const badgeEl = document.getElementById("badge");
+
+    function getBadge(score) {
+      if (score >= 20) return "Genius";
+      if (score >= 15) return "Pro";
+      if (score >= 10) return "Mathlete";
+      if (score >= 5) return "Learner";
+      return "Beginner";
+    }
+
+    function updateDashboard() {
+      document.getElementById("dashName").textContent = playerName;
+      document.getElementById("dashLevel").textContent = levelNames[level];
+      document.getElementById("dashScore").textContent = score;
+      const badgeName = getBadge(score);
+      badgeEl.textContent = badgeName;
+      badgeEl.className = `badge ${badgeName}`;
+    }
+
+    function getRandomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function generateExpression(level) {
+      switch (level) {
+        case 0:
+          return `${getRandomInt(1, 5)} + ${getRandomInt(1, 5)}`;
+        case 1:
+          return `${getRandomInt(1, 10)} - ${getRandomInt(1, 5)} + ${getRandomInt(1, 5)}`;
+        case 2:
+          return `${getRandomInt(1, 10)} + ${getRandomInt(1, 5)} * ${getRandomInt(1, 5)}`;
+        case 3:
+          return `(${getRandomInt(2, 10)} + ${getRandomInt(2, 10)}) * ${getRandomInt(2, 5)} - ${getRandomInt(1, 5)}`;
+        case 4:
+          return `${getRandomInt(1, 10)} + (${getRandomInt(1, 10)} * ${getRandomInt(1, 5)}) / (${getRandomInt(1, 5)} + ${getRandomInt(1, 3)}) - ${getRandomInt(1, 5)}`;
+        default:
+          return "1 + 1";
+      }
+    }
+
+    function buildQuestion() {
+      expression = generateExpression(level);
+      currentAnswer = Math.round(eval(expression) * 100) / 100;
+      document.getElementById("question").textContent = `Solve: ${expression}`;
+      document.getElementById("answer").value = "";
+      document.getElementById("feedback").textContent = "";
+    }
+
+    function checkAnswer() {
+      const userAns = parseFloat(document.getElementById("answer").value);
+      if (Math.abs(userAns - currentAnswer) < 0.01) {
+        score++;
+        document.getElementById("feedback").textContent = "✅ Correct!";
+      } else {
+        score = Math.max(0, score - 1);
+        document.getElementById("feedback").textContent = `❌ Wrong! Answer: ${currentAnswer}`;
+      }
+      updateDashboard();
+      buildQuestion();
+    }
+
+    function startGame() {
+      playerName = document.getElementById("playerName").value.trim() || "Player";
+      level = parseInt(document.getElementById("levelSelect").value);
+      score = 0;
+
+      document.getElementById("settings").style.display = "none";
+      document.getElementById("dashboard").style.display = "block";
+      document.getElementById("quiz-box").style.display = "block";
+
+      updateDashboard();
+      buildQuestion();
+    }
+  </script>
+
+</body>
+</html>
