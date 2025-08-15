@@ -1,0 +1,30 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/UI/HUD.gd" id="1"]
+
+[node name="HUD" type="CanvasLayer"]
+script = ExtResource("1")
+
+[node name="Center" type="Control" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+pivot_offset = Vector2(0, 0)
+
+[node name="Crosshair" type="Label" parent="Center"]
+text = "+"
+horizontal_alignment = 1
+vertical_alignment = 1
+pivot_offset = Vector2(0, 0)
+
+[node name="Stats" type="HBoxContainer" parent="."]
+anchor_right = 1.0
+margin_left = 12.0
+margin_top = 12.0
+
+[node name="Ammo" type="Label" parent="Stats"]
+text = "Ammo: --"
+
+[node name="Grenades" type="Label" parent="Stats"]
+text = "  |  Grenades: --"

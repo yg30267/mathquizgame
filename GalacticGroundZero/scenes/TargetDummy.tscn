@@ -1,0 +1,26 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/Health.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/Damageable.gd" id="2"]
+
+[sub_resource type="CapsuleShape3D" id="1"]
+radius = 0.5
+height = 1.2
+
+[sub_resource type="CapsuleMesh" id="2"]
+radius = 0.5
+mid_height = 0.7
+
+[node name="TargetDummy" type="Node3D"]
+script = ExtResource("2")
+
+[node name="Body" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Body"]
+shape = SubResource("1")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("2")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("1")
